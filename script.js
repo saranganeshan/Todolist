@@ -13,114 +13,62 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#name').click(function(e){
-		$('#submit').on('click', function(e) {
-			if ($('#name').val().length !== 0){
-				$('#submit').click();
-			}
-		});
-	});
+// SUBMIT
+    $('#submit').click(function() {
+        var value = $('#name').val();
+        if (value.length !== 0) {
+            items.push(value);
+            $('#name').val('');
+            assign_value(items);
+            set_localstorage('item', items);
+            $('button').prop('disabled', true);
+        }
+    });
 
-	$('#submit').click(function(){
-		var value = $('#name').val();
-		items.push(value);
-		$('#name').val('');
-		assign_value(items);
-		set_localstorage('item', items);
-		// set button 
-		$('button').prop('disabled', true);
-	});
 // DELETE 
-	$('ul').delegate("span", "click", function(){
-		index = $('span').index(this);
-		$('li').eq(index).remove();
-		items.splice(index, 1);
-		set_localstorage('item', items);
-		
-	});
+    $('ul').on('click', '.delete-item', function() {
+        index = $(this).closest('li').index();
+        items.splice(index, 1);
+        assign_value(items);
+        set_localstorage('item', items);
+    });
 
 // EDIT 
-	$('ul').delegate('li', 'click', function(){
-		index = $('li').index(this);
-		var content = items[index];
-		console.log(content);
-		$('#edit-input').val(content );
-	});
+    $('ul').on('click', '.edit-item', function() {
+        index = $(this).closest('li').index();
+        var content = items[index];
+        $('#edit-input').val(content);
+    });
 
-	$('#edit-button').click(function(){
-		items[index] = $('#edit-input').val();
-		assign_value(items);
-		set_localstorage("item", items);
-	});
+// SAVE
+    $('#edit-button').click(function() {
+        var editedValue = $('#edit-input').val();
+        if (editedValue.length !== 0) {
+            items[index] = editedValue;
+            assign_value(items);
+            set_localstorage('item', items);
+            $('#edit-input').val(''); 
+        }
+    });
 
-// ADD VALUE
-	function assign_value(items){
-		$('li').remove();
-		if(items.length > 0) {
-			for(var i = 0; i < items.length; i++) {
-				$('ul').append('<li class= "list-group-item"  data-toggle="modal" data-target="#editModal">' + items[i] + 
-				'<span class="icon-remove btn btn-primary">DELETE</span></li>');
-			}
-		}
-	};
+// ASSIGN VALUES TO LIST
+    function assign_value(items) {
+        $('ul').empty();
+        if (items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                $('ul').append('<li class="list-group-item">' + items[i] +
+                    '<span class="edit-item btn btn-primary ml-2" data-toggle="modal" data-target="#editModal">EDIT</span>' +
+                    '<span class="delete-item btn btn-danger pl-2 mx-2">DELETE</span></li>');
+            }
+        }
+    }
 
-	function set_localstorage(key, items){
-		localStorage[key] = JSON.stringify(items);
-	}
+   
+    function set_localstorage(key, items) {
+        localStorage.setItem(key, JSON.stringify(items));
+    }
 
-	function get_value_local(key){
-		if(localStorage[key])
-			return JSON.parse(localStorage[key]);
-		else 
-			return [];
-	}
-
+    function get_value_local(key) {
+        return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)) : [];
+    }
 });
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// =================================================================
-// $(document).ready(function () {     
-//     $('.submit').click(function () {
-//         var name_value = localStorage.displayMessages || '[]',
-//             assign_value = JSON.parse(name_value)
-//             assign_value.push($('#name').val());
-//             localStorage.displayMessages = JSON.stringify(assign_value);
-//          showMessages();        
-//     });
-    
-//     function showMessages() {
-//         var name_value = localStorage.displayMessages || '[]',
-//             assign_value = JSON.parse(name_value);
-//        var one= $('.result').html(assign_value.join('<br>'));
-//         $('.edit').click(function () {
-//            var curr= $('#name').val(assign_value);
-//         })
-//     }
-//     showMessages();
-// });
-
-// =======================================
-
